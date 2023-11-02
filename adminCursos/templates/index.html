@@ -1,0 +1,19 @@
+{% load static %}
+<html>
+    <head>
+        <title>
+            Python AP
+        </title>
+        <link rel="stylesheet" href="{% static 'adminCursos/index.css' %}">
+    </head>
+    <body>
+        <div class="contenedor-gral">
+            <h1>
+                Bienvenido a la app {{ nombre }}
+            </h1>
+            <div class="contenedor-links">
+                <a href="/cursos">Cursos</a>
+            </div>
+        </div>
+    </body>
+</html>

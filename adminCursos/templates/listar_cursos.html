@@ -1,0 +1,10 @@
+<html>
+    <body>
+        <h1> Cursos disponibles: </h1>
+        <ul>
+            {% for curso in cursos %}
+                <li> Nombre: {{ curso.nombre }} </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>

@@ -1,0 +1,19 @@
+@import url(//fonts.googleapis.com/css?family=Open+Sans);
+
+
+
+body {
+    background-color: #FAFAFA;
+    font-family: 'Open Sans', serif;
+}
+
+h1 {
+    color: #6EA4BF;
+    font-weight: 400;
+}
+
+.contenedor-gral {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

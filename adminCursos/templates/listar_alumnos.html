@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <style>
+            h1 {
+                color: "blue";
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <h1>Alumnos registrados</h1>
+            {% for alumno in alumnos %}
+                <div>
+                    <h2>{{ alumno.nombre }}</h2>
+                    <p>{{ alumno.apellido }}</p>
+                    <p>{{ alumno.dni }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>
