@@ -1,22 +1,121 @@
 from django.shortcuts import render
-from .models import Alumno, Curso
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, FileResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, FileResponse, JsonResponse
+from django.views.generic.edit import DeleteView
+from django.views.decorators.csrf import csrf_exempt
 import csv
+import json
+from .models import Alumno, Curso
 
-# Create your views here.
 def index(request):
+    """ Página home con links a las distintas secciones """
     nombre_app = "Administrador de Academia"
     return render(request, "index.html", { "nombre": nombre_app })
 
 def listar_cursos(request):
+    """ Lista todos los cursos haciendo una consulta a la base de datos """
     cursos = Curso.objects.all()
     return render(request, "listar_cursos.html", {"cursos": cursos})
 
 def listar_alumnos(request):
+    """ Lista todos los alumnos haciendo una consulta a la base de datos """
     alumnos = Alumno.objects.all()
     return render(request, "listar_alumnos.html", {"alumnos": alumnos})
 
-def alumno(request):
+def cargar_alumnos(request):
+    """ Abre un archivo csv con datos de alumnos y los agrega a la base de datos chequeando que no se repitan por dni como clave primaria """
+    with open("csv_carga.csv") as archivo:
+        lector_csv = csv.DictReader(archivo)
+        for alumno in lector_csv:
+            if(not Alumno.objects.filter(dni=alumno["dni"])):
+                print("agrego")
+                nuevo_alumno = Alumno(dni=alumno["dni"], nombre=alumno["nombre"], apellido=alumno["apellido"])
+                nuevo_alumno.save()
+    return HttpResponse("Okay")
+
+def cargar_alumnos_file_upload(request):
+    """ Abre un archivo csv que llega en el request con datos de alumnos y los agrega a la base de datos chequeando que no se repitan por dni como clave primaria """
+    with open("csv_carga.csv") as archivo:
+        lector_csv = csv.DictReader(archivo)
+        for alumno in lector_csv:
+            if(not Alumno.objects.filter(dni=alumno["dni"])):
+                print("agrego")
+                nuevo_alumno = Alumno(dni=alumno["dni"], nombre=alumno["nombre"], apellido=alumno["apellido"])
+                nuevo_alumno.save()
+    return HttpResponse("Okay")
+
+
+def asignar_alumno_curso(request, dni, id_curso):
+    """ Asigna un curso a un alumno, en caso de existir ambos en la base de datos """
+    try:
+        alumno = Alumno.objects.get(dni=dni)
+        curso = Curso.objects.get(pk=id_curso)
+        alumno.curso.add(curso)
+        alumno.save()
+    except:
+        return HttpResponseNotFound("El curso y/o el alumno no existen")
+    return HttpResponse(f"Cursos del alumno {alumno.nombre} actualizados")
+
+def alumno(request, dni):
+    if request.method == "GET":
+        alumno = Alumno.objects.get(dni=dni)
+        alumno_res = {
+            "dni": alumno.dni,
+            "nombre": alumno.nombre,
+            "apellido": alumno.apellido
+        }
+        return JsonResponse(alumno_res)
+    return HttpResponseBadRequest("Solo aceptamos get")
+
+@csrf_exempt
+def eliminar_alumno(request, dni):
+    """ Elimina un alumno chequeando que exista previamente en la base de datos """
+    try:
+        alumno = Alumno.objects.get(dni=dni)
+    except:
+        return HttpResponseNotFound("El alumno no existe en la base de datos")
+    
+    if request.method == "DELETE":
+        alumno.delete()
+        return HttpResponse("Se borró lo que es el alumno") 
+    
+    return render(request, "alumno_eliminar.html", {"alumno": alumno})
+
+def alumnos_por_curso(request, id_curso):
+    try:
+        alumnos = Alumno.objects.filter(curso__id=id_curso)
+        lista_alumnos = []
+        for alumno in alumnos:
+            nuevo_al = {
+                "nombre": alumno.nombre,
+                "apellido": alumno.apellido            
+            }
+            lista_alumnos.append(nuevo_al)
+
+    except Exception as e:
+        print(e)
+        return HttpResponseNotFound("El curso no existe en la base de datos")
+    return JsonResponse(lista_alumnos, safe=False)
+
+@csrf_exempt
+def modificar_alumno(request, dni):
+    response = HttpResponseBadRequest("Sólo se acepta el método PUT")
+    if request.method == "PUT":
+        try:
+            alumno = Alumno.objects.get(dni=dni)
+            actualizacion = json.loads(request.body)
+            alumno.nombre = actualizacion["nombre"]
+            alumno.apellido = actualizacion["apellido"]
+            alumno.save()
+            response = HttpResponse("OKAY")
+        except KeyError:
+            print("keyerror")
+            response = HttpResponseBadRequest("El payload enviado es incorrecto")
+        except Exception as e:
+            print(e)
+            response = HttpResponseNotFound("El alumno que se quiere modificar no existe")
+    return response
+
+def alumno_query_param(request):
     query = request.GET
     try:
         dni = query["dni"]
@@ -31,19 +130,27 @@ def alumno(request):
             
             response = FileResponse(open("csv_response.csv", "rb"), as_attachment=True, filename="response.csv")
             return response
-        
     except KeyError:
         return HttpResponseBadRequest
-    
     return HttpResponseNotFound
 
-def cargar_alumnos(request):
-    with open("csv_carga.csv") as archivo:
-        lector_csv = csv.DictReader(archivo)
-        for alumno in lector_csv:
-            if(not Alumno.objects.filter(dni=alumno["dni"])):
-                print("agrego")
-                nuevo_alumno = Alumno(dni=alumno["dni"], nombre=alumno["nombre"], apellido=alumno["apellido"])
-                nuevo_alumno.save()
+# View para eliminar manejada con herencia.
+# Requiere un formulario de tipo submit con un botón y un token csrf para confirmar.
+# Toma la clave primaria del modelo desde la url.
+class EliminarAlumno(DeleteView):
+    model = Alumno
+    template_name = "alumno_eliminar.html"
+    success_url = "/listarAlumnos"
 
-    return HttpResponse("Okay")
+
+def eliminar_alumno_get(request, dni):
+    """ Elimina un alumno chequeando que exista previamente en la base de datos """
+    if request.method == "GET":
+        try:
+            alumno = Alumno.objects.get(dni=dni)
+            alumno.delete()
+        except:
+            return HttpResponseNotFound("El alumno no existe en la base de datos")
+    else:
+        return HttpResponseBadRequest("Bad request")
+    return HttpResponse("Se borró lo que es el alumno") 

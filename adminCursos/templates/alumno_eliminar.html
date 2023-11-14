@@ -1,0 +1,20 @@
+{% load static %}
+<html>
+    <head>
+        <title>
+            Python AP - delete
+        </title>
+        <link rel="stylesheet" href="{% static 'adminCursos/alumno_eliminar.css' %}">
+    </head>
+    <body>
+        <div class="contenedor-gral">
+            <h1>
+                Eliminar alumno
+            </h1>
+            <form action="" method="post"> {% csrf_token %}
+                <p>Estás segurx que querés borrar el alumnx  {{ alumno.nombre }} ?</p>
+                <input type="submit" value="Confirmar">
+            </form>
+        </div>
+    </body>
+</html>

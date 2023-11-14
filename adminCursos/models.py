@@ -24,7 +24,7 @@ class Alumno(models.Model):
     dni = models.IntegerField(null=True)
     telefono = models.CharField(max_length=15, null=True)
     correo_electronico = models.EmailField(max_length=50,null=True)
-    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, null=True)
+    curso = models.ManyToManyField("Curso", related_name="cursada", blank=True)
 
     def __str__(self) -> str:
         return self.nombre + self.apellido
