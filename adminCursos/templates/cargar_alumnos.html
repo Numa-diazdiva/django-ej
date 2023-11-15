@@ -1,0 +1,16 @@
+{% load static %}
+<html>
+    
+    <body>
+        <div >
+            <h1>
+                Agregar alumnos
+            </h1>
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" value="Confirmar">
+            </form>
+        </div>
+    </body>
+</html>

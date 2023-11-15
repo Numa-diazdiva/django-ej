@@ -7,6 +7,7 @@ urlpatterns = [
     path("cursos", views.listar_cursos, name="listar_cursos"),
     path("listarAlumnos", views.listar_alumnos, name="listar_alumnos"),
     path("cargarAlumnos/", views.cargar_alumnos, name="cargar_alumnos"),
+    path("cargarAlumnosFile", views.cargar_alumnos_file_upload, name="cargar_alumnos_file"),
     path("alumno/<int:dni>", views.alumno, name="alumno"),
     path("eliminarAlumno/<int:dni>", views.eliminar_alumno, name="eliminar_alumno"),
     path("eliminarAlumnoClase/<int:pk>", views.EliminarAlumno.as_view(), name="eliminar_alumno_clase"),

@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, FileResponse, JsonResponse
 from django.views.generic.edit import DeleteView
 from django.views.decorators.csrf import csrf_exempt
 import csv
 import json
 from .models import Alumno, Curso
+from .forms import UploadFileForm
 
 def index(request):
     """ Página home con links a las distintas secciones """
@@ -27,21 +28,33 @@ def cargar_alumnos(request):
         lector_csv = csv.DictReader(archivo)
         for alumno in lector_csv:
             if(not Alumno.objects.filter(dni=alumno["dni"])):
-                print("agrego")
                 nuevo_alumno = Alumno(dni=alumno["dni"], nombre=alumno["nombre"], apellido=alumno["apellido"])
                 nuevo_alumno.save()
     return HttpResponse("Okay")
 
 def cargar_alumnos_file_upload(request):
     """ Abre un archivo csv que llega en el request con datos de alumnos y los agrega a la base de datos chequeando que no se repitan por dni como clave primaria """
-    with open("csv_carga.csv") as archivo:
-        lector_csv = csv.DictReader(archivo)
+    if request.method == "POST":
+        form_subido = UploadFileForm(request.FILES["file"]) # Faltaría checar que sea válido
+        # Los archivos llegan en el dict FILES de request
+        archivo = request.FILES["file"]
+        # Leemos y decodificamos el archivo
+        archivo_raw = archivo.read().decode('utf-8')
+        # Ya tenemos el archivo "crudo", tenemos que separarlo en líneas para poder iterarlo con un dictReader y que reconozca el header
+        lector_csv = csv.DictReader(archivo_raw.splitlines())
         for alumno in lector_csv:
-            if(not Alumno.objects.filter(dni=alumno["dni"])):
-                print("agrego")
-                nuevo_alumno = Alumno(dni=alumno["dni"], nombre=alumno["nombre"], apellido=alumno["apellido"])
-                nuevo_alumno.save()
-    return HttpResponse("Okay")
+            try:
+                if(not Alumno.objects.filter(dni=alumno["dni"])):
+                    print("agrego")
+                    nuevo_alumno = Alumno(dni=alumno["dni"], nombre=alumno["nombre"], apellido=alumno["apellido"])
+                    nuevo_alumno.save()
+            except Exception as e:
+                print(e)
+
+        return redirect("listar_alumnos")
+    else:
+        form = UploadFileForm()
+    return render(request, "cargar_alumnos.html", {"form": form})
 
 
 def asignar_alumno_curso(request, dni, id_curso):
