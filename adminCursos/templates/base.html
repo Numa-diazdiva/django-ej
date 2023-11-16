@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>AP - Django</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{% static 'adminCursos/estilos.css' %}">
+    </head>
+    <body>
+        <nav class="navbar-container">
+            <div class="navbar-nav">
+                <img src={% static 'img/perla.png' %} />
+                <ul class="navbar-links">
+                    <li><a class="navbar-link-item" href={% url "listar_cursos"  %}>Cursos</a></li>
+                    <li><a class="navbar-link-item" href={% url "listar_alumnos"  %}>Alumnos</a></li>
+                    <li><a class="navbar-link-item" href={% url "cargar_alumnos_file"  %}>Cargar</a></li>
+                    <li><a class="navbar-link-item" href={% url "eliminar" %}>Eliminar</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div id="contenido" class="content"> 
+            {% block contenido %} {% endblock %}
+        </div>
+    </body>
+</html>

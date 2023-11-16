@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+
+<html>
+    <head>
+
+    </head>
+
+    <body>
+        {% block contenido %}
+            <div class="grilla-cards" >
+                {% for alumno in alumnos %}
+                    <div class="alumno-card">
+                        <h2>{{ alumno.nombre }}</h2>
+                        <a class="delete-button" href={% url 'eliminar_alumno' alumno.dni %}>Borrar</a>
+                    </div>
+                {% endfor %}
+            </div>  
+        {% endblock %}
+    </body>
+</html>

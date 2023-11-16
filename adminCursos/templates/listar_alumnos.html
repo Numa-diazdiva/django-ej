@@ -1,12 +1,10 @@
+{% extends "base.html" %}
 <html>
     <head>
-        <style>
-            h1 {
-                color: "blue";
-            }
-        </style>
+
     </head>
     <body>
+        {% block contenido %}
         <div>
             <h1>Alumnos registrados</h1>
             {% for alumno in alumnos %}
@@ -17,5 +15,6 @@
                 </div>
             {% endfor %}
         </div>
+        {% endblock %}
     </body>
 </html>

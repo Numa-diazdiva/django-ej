@@ -1,16 +1,21 @@
+{% extends "base.html" %}
 {% load static %}
 <html>
-    
     <body>
-        <div >
-            <h1>
+        {% block contenido %}
+        <div class="agregar-alumnos-contenedor">
+            <h1 class="titulo">
                 Agregar alumnos
             </h1>
-            <form action="" method="post" enctype="multipart/form-data">
+            <p class="descripcion">
+                subí un archivo en formato csv con los siguientes campos: "nombre", "apellido" "dni"
+            </p>
+            <form class="formulario" action="" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form }}
-                <input type="submit" value="Confirmar">
+                <input class="boton" type="submit" value="SUBIR">
             </form>
         </div>
+        {% endblock contenido %}
     </body>
 </html>

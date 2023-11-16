@@ -1,12 +1,12 @@
+{% extends "base.html" %}
 {% load static %}
+
 <html>
     <head>
-        <title>
-            Python AP
-        </title>
         <link rel="stylesheet" href="{% static 'adminCursos/index.css' %}">
     </head>
     <body>
+        {% block contenido %}
         <div class="contenedor-gral">
             <h1>
                 Bienvenido a la app {{ nombre }}
@@ -15,5 +15,6 @@
                 <a href="/cursos">Cursos</a>
             </div>
         </div>
+        {% endblock %}
     </body>
 </html>

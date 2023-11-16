@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotFound, FileResponse, JsonResponse
-from django.views.generic.edit import DeleteView
+from django.views.generic.edit import DeleteView, UpdateView
 from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse_lazy
 import csv
 import json
 from .models import Alumno, Curso
@@ -79,6 +80,11 @@ def alumno(request, dni):
         return JsonResponse(alumno_res)
     return HttpResponseBadRequest("Solo aceptamos get")
 
+def eliminar(request):
+    """ Vista que muestra los alumnos para eliminarlos """
+    alumnos = Alumno.objects.all()
+    return render(request, "eliminar.html", { "alumnos": alumnos })
+
 @csrf_exempt
 def eliminar_alumno(request, dni):
     """ Elimina un alumno chequeando que exista previamente en la base de datos """
@@ -87,13 +93,14 @@ def eliminar_alumno(request, dni):
     except:
         return HttpResponseNotFound("El alumno no existe en la base de datos")
     
-    if request.method == "DELETE":
+    if request.method == "DELETE" or request.method == "POST":
         alumno.delete()
-        return HttpResponse("Se borró lo que es el alumno") 
+        return redirect("listar_alumnos")
     
     return render(request, "alumno_eliminar.html", {"alumno": alumno})
 
 def alumnos_por_curso(request, id_curso):
+    """ Retorna la información de los alumnos correspondientes al curso pasado por parámetro en formato JSON """
     try:
         alumnos = Alumno.objects.filter(curso__id=id_curso)
         lista_alumnos = []
@@ -111,6 +118,7 @@ def alumnos_por_curso(request, id_curso):
 
 @csrf_exempt
 def modificar_alumno(request, dni):
+    """ Modifica la información de un alumno siempre que el método sea PUT y haya un json en el body con el formato acorde """
     response = HttpResponseBadRequest("Sólo se acepta el método PUT")
     if request.method == "PUT":
         try:
@@ -129,6 +137,7 @@ def modificar_alumno(request, dni):
     return response
 
 def alumno_query_param(request):
+    """ Una alternativa al parámetro del dni por url, para ejemplificar el uso de query params """
     query = request.GET
     try:
         dni = query["dni"]
@@ -167,3 +176,11 @@ def eliminar_alumno_get(request, dni):
     else:
         return HttpResponseBadRequest("Bad request")
     return HttpResponse("Se borró lo que es el alumno") 
+
+
+class AlumnoUpdateView(UpdateView):
+    """ Generic view para hacer un update del modelo """
+    model = Alumno
+    fields = ["nombre", "apellido"]
+    template_name = "alumno_editar.html"
+    success_url = "/listarAlumnos"

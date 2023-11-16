@@ -1,0 +1,124 @@
+:root {
+    padding: 0;
+    margin: 0; 
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    background-color: #FAFAFA;
+    font-family: 'Open Sans', serif;
+}
+
+.navbar-container {
+    min-width: 100vw;
+    background-color: black;
+    padding: 0;
+}
+
+.navbar-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+.navbar-nav img {
+    width: 40px;
+ }
+
+.navbar-links {
+    display: flex;
+    flex-direction: row;
+    gap: 20%;
+ }
+
+
+.navbar-links a {
+    text-decoration: none;
+    font-family: sans-serif;
+    color: #FAFAFA;
+    transition: all 400ms ease;
+ }
+
+.navbar-link-item:hover {
+    transform: scale(1.5);
+    color: rgb(92, 92, 151);
+}
+    
+.contenedor-gral {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+.contenedor-gral h1 {
+    color: #6EA4BF;
+    font-weight: 400;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    min-width: 100vw;
+    align-items: center;
+}
+
+.titulo {
+    font-size: 48px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.agregar-alumnos-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.boton {
+    padding: 10px;
+    color: #FAFAFA;
+    background-color: #0077b6;
+    border: 0px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 400ms ease;
+}
+
+.boton:hover {
+    opacity: 0.8;
+}
+
+.alumno-card {
+    display: flex;
+    flex-direction: row;
+    background-color: #6EA4BF;
+    gap: 12px;
+    padding: 8px;
+    border-radius: 10px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-weight: 200;
+    color: #FAFAFA;
+}
+
+.delete-button {
+    background-color: #d62828;
+    color: #FAFAFA;
+    cursor: pointer;
+    transition: all 400ms ease;
+}
+
+.delete-button:hover {
+    opacity: 0.8;
+}
+
+.grilla-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
